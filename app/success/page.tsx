@@ -16,7 +16,7 @@ export default function SuccessPage() {
   }
 
   // ❌ NOT PAID USER
-  if (!user?.isPayed) {
+  if (!user?.plan =='PRO') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center p-6 bg-white shadow-lg rounded-2xl">
