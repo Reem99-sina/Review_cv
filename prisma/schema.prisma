@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  name       String?
+  email      String   @unique
+  password   String
+  role       Role     @default(USER)
+  isVerified Boolean  @default(false)
+  verifyCode String?
+  resumes    Resume[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+   plan       Plan     @default(FREE) 
+}
+
+model Resume {
+  id      String  @id @default(cuid())
+  title   String?
+  fileUrl String
+  rawText String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  reviews Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id String @id @default(cuid())
+
+  resume_id String
+  resume    Resume @relation(fields: [resume_id], references: [id], onDelete: Cascade)
+
+  ats_score        Int
+  strengths        Json
+  weaknesses       Json
+  missing_keywords Json
+  improved_summary String?
+
+  created_at DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  PRO
+}
