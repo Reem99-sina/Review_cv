@@ -5,7 +5,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const sig = (headers()as any).get("stripe-signature")!;
+  const headerList = await headers();
+  const sig = headerList.get("stripe-signature")!;
 
   let event;
 
@@ -13,28 +14,36 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
-  } catch  {
+  } catch {
     return NextResponse.json({ error: "Webhook error" }, { status: 400 });
   }
 
-  // ✅ SUCCESS EVENT
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+    try {
+      const session = event.data.object;
+      const userId = session.metadata?.userId;
 
-    const userId = session.metadata?.userId;
+      console.log("Metadata:", session.metadata);
+      console.log("User ID:", userId);
 
-    if (!userId) {
-      return NextResponse.json({ error: "No userId" }, { status: 400 });
+      if (!userId) {
+        return NextResponse.json({ error: "No userId" }, { status: 400 });
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          plan: "PRO",
+        },
+      });
+
+      console.log("User upgraded successfully");
+    } catch (error) {
+      console.error("Webhook error:", error);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        plan: "PRO",
-      },
-    });
   }
 
   return NextResponse.json({ received: true });
