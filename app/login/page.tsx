@@ -5,7 +5,7 @@ import StableButton from "@/components/common/button";
 import Input from "@/components/common/input";
 import { useLogin } from "@/action/user";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type LoginForm = {
   email: string;
@@ -19,11 +19,13 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>();
   const {mutateAsync}=useLogin()
-  const router = useRouter();
+ const queryClient = useQueryClient();
   const onSubmit = async (data: LoginForm) => {
    try{
-     await mutateAsync(data)
-     router.push("/")
+     await mutateAsync(data).then((res)=>{
+     queryClient.setQueryData(["me"], { user: res?.user })
+     })
+   
    }catch{}
    
   };

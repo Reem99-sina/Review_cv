@@ -15,7 +15,7 @@ export default function UploadResume() {
   } = useForm<UploadResumeData>();
   const router = useRouter();
 
-  const { mutateAsync, data,error } = useUploadResume();
+  const { mutateAsync, data } = useUploadResume();
 
   const onSubmit = async (data: UploadResumeData) => {
     const file = data.file?.[0];
@@ -23,9 +23,10 @@ export default function UploadResume() {
     const formData = new FormData();
     formData.append("file", file);
 
-    await mutateAsync(formData).then(() => {}).catch((err)=>{console.log(err,'err')});
+    await mutateAsync(formData)
+      .then(() => {})
+      
   };
-  console.log(data,'dtaa',error)
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 h-full">
@@ -48,18 +49,19 @@ export default function UploadResume() {
             <StableButton disabled={isSubmitting} type="submit">
               {isSubmitting ? "Uploading..." : "Upload Resume"}
             </StableButton>
+            {data?.review && (
+              <StableButton
+                disabled={!data?.review}
+                onClick={() => {
+                  router.push("/review/" + data?.review?.id);
+                }}
+                className="mx-3"
+              >
+                View the Result
+              </StableButton>
+            )}
           </form>
         </div>
-        {data?.review && (
-          <StableButton
-            disabled={!data?.review}
-            onClick={() => {
-              router.push("/review/" + data?.review?.id);
-            }}
-          >
-            View the Result
-          </StableButton>
-        )}
       </div>
     </div>
   );

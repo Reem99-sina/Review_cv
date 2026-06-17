@@ -75,8 +75,8 @@ export async function POST(req: Request) {
       resume,
       review,
     });
-  } catch (err) {
-    console.log(err, "erre");
+  } catch {
+  
     return Response.json({ error: "Upload failed" }, { status: 500 });
   }
 }

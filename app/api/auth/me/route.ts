@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/token";
 
-
 export async function GET(req: Request) {
   try {
     // 1. get token from headers
@@ -31,6 +30,8 @@ export async function GET(req: Request) {
         role: true,
         isVerified: true,
         createdAt: true,
+        plan: true,
+        isPayed: true,
       },
     });
 
@@ -39,8 +40,7 @@ export async function GET(req: Request) {
     }
 
     return Response.json({ user });
-  } catch (err) {
-    console.log(err,'err')
+  } catch {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

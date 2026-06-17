@@ -25,9 +25,6 @@ export async function POST(req: Request) {
       const session = event.data.object;
       const userId = session.metadata?.userId;
 
-      console.log("Metadata:", session.metadata);
-      console.log("User ID:", userId);
-
       if (!userId) {
         return NextResponse.json({ error: "No userId" }, { status: 400 });
       }
@@ -36,10 +33,10 @@ export async function POST(req: Request) {
         where: { id: userId },
         data: {
           plan: "PRO",
+          isPayed:true
         },
       });
 
-      console.log("User upgraded successfully");
     } catch (error) {
       console.error("Webhook error:", error);
       return NextResponse.json({ error: "Database error" }, { status: 500 });

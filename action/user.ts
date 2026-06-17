@@ -7,9 +7,20 @@ import type {
 } from "../types/user";
 import { apiRequest } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+
+export function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: () => apiRequest("/api/auth/me"),
+    retry: true,
+  });
+}
 
 export function useLogin() {
   const queryClient = useQueryClient();
+  const router = useRouter();
+
   return useMutation({
     mutationFn: async ({ email, password }: userSigninData) => {
       return apiRequest("/api/auth/login", {
@@ -19,9 +30,11 @@ export function useLogin() {
     },
 
     onSuccess: async (data) => {
-      await saveToken(data?.token);
-      toast.success(data?.message);
+      saveToken(data?.token);
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      toast.success(data?.message || "login successfully");
+      router.push("/");
+      router.refresh();
     },
     onError: (error) => {
       toast.error(error?.message);
@@ -46,19 +59,10 @@ export function useRegister() {
   });
 }
 
-export function useMe() {
-  return useQuery({
-    queryKey: ["me"],
-
-    queryFn: () => apiRequest("/api/auth/me"),
-    retry: false,
-  });
-}
-
 export function useVerifyEmail() {
   return useMutation({
     mutationFn: async ({ email, code }: verifyEmailData) => {
-      console.log(email, "email");
+
       return apiRequest("/api/auth/verify-email", {
         method: "POST",
         body: { email, code },

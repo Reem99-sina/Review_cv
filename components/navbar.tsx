@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
+
   const links = [
     { name: "Home", path: "/" },
 

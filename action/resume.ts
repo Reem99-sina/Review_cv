@@ -18,7 +18,7 @@ export function useUploadResume() {
     },
 
     onError: (error: any) => {
-      console.log(error?.message, "message");
+     
       if (error?.message == "Upgrade required") {
         router.push("/pricing");
       }

@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   const { email, code } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { email } });
-console.log(email,code,user,'user')
+
   if (!user || user.verifyCode !== code) {
     return Response.json({ error: "Invalid code" }, { status: 400 });
   }

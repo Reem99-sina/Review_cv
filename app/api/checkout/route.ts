@@ -16,7 +16,7 @@ export async function POST(req: Request) {
           product_data: {
             name: "Pro Plan",
           },
-          unit_amount: 9 * 100, // $9
+          unit_amount: 2 * 100, // $9
           recurring: {
             interval: "month",
           },
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       },
     ],
 
-    success_url: `${process.env.NEXT_PUBLIC_URL}/success/${email}`,
+    success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/pricing`,
 
     metadata: {
