@@ -30,6 +30,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <meta
+          name="google-site-verification"
+          content="X4JUofDq1_SmhdRGJlnch_ewQIj4DmKtUb7z7vXP3C8"
+        />
+
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers>
           <div className="flex flex-col flex-1  ">
