@@ -13,7 +13,7 @@ export default function ReviewIb() {
   const { data } = useGetReview(params?.id);
 
   return (
-    <div className=" flex flex-col justify-center items-center px-5 flex-1 text-secondary h-full">
+    <div className="py-15 flex flex-col justify-center items-center px-5 flex-1 text-secondary h-full">
       {data?.review ? (
         <ReviewAppear review={data?.review} />
       ) : (

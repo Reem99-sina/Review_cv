@@ -6,7 +6,7 @@ export function ReviewAppear({ review }: { review: reviewResume }) {
       <h2 className="text-lg font-bold text-text-custom">ATS Review</h2>
 
       <p className="text-sm">
-        <span className="font-semibold">Score:</span> {review.ats_score}/10
+        <span className="font-semibold">Score:</span> {review.ats_score}/100
       </p>
 
       <div>

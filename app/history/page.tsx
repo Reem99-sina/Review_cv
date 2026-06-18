@@ -101,7 +101,7 @@ export default function HistoryPage() {
                               <p className="text-sm font-medium">ATS Score</p>
 
                               <p className="text-lg font-bold text-text-custom">
-                                {review.ats_score}/10
+                                {review.ats_score}/100
                               </p>
                             </div>
 
