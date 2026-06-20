@@ -7,34 +7,57 @@ export function generateCode() {
 }
 
 export async function POST(req: Request) {
-  try {
-    const { name, email, password } = await req.json();
+  const { name, email, password } = await req.json();
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return Response.json({ error: "User already exists" }, { status: 400 });
-    }
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  // 🚨 CASE 1: user exists AND verified
+  if (existingUser?.isVerified) {
+    return Response.json(
+      { error: "User already exists" },
+      { status: 400 }
+    );
+  }
+
+  // 🚨 CASE 2: user exists BUT NOT verified → resend code
+  if (existingUser && !existingUser.isVerified) {
     const code = generateCode();
 
-    const user = await prisma.user.create({
+    await prisma.user.update({
+      where: { email },
       data: {
-        name,
-        email,
-        password: hashedPassword,
         verifyCode: code,
-        isVerified: false,
       },
     });
 
-    await sendVerificationEmail(user.email, code);
+    await sendVerificationEmail(email, code);
 
-    return Response.json({ message: "User created, verify email" });
-  } catch  {
-    return Response.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return Response.json({
+      message: "Verification code resent",
+      status: "PENDING_VERIFICATION",
+    });
   }
+
+  // 🚀 CASE 3: new user
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const code = generateCode();
+
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+      verifyCode: code,
+      isVerified: false,
+    },
+  });
+
+  await sendVerificationEmail(user.email, code);
+
+  return Response.json({
+    message: "User created, verify email",
+    status: "PENDING_VERIFICATION",
+  });
 }

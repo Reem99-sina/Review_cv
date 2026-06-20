@@ -10,7 +10,7 @@ export default async function VerifyEmail({ params }: Props) {
   const { email } = await params;
 
   return (
-    <div className="flex-1 flex items-center justify-center px-4">
+    <div className="flex-1 flex items-center justify-center px-4 h-full">
       <div className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
         <div className="text-center space-y-3">
           <h1 className="text-2xl font-bold text-text-custom">
