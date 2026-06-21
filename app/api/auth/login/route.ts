@@ -15,6 +15,12 @@ export async function POST(req: Request) {
     return Response.json({ error: "Email not verified" }, { status: 403 });
   }
 
+  if (user.role != "USER") {
+    return Response.json(
+      { error: "admin user open dashboard" },
+      { status: 403 },
+    );
+  }
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -25,5 +31,5 @@ export async function POST(req: Request) {
     userId: user.id,
     role: user.role,
   });
-  return Response.json({ token ,user});
+  return Response.json({ token, user });
 }

@@ -30,25 +30,22 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const status = error?.response?.status;
-    const path = typeof window !== "undefined" ? window.location.pathname : "";
-    const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
-   
-    if (status === 401 || status === 403) {
-      await clearAuthStorage();
-
-      // 🚨 مهم: لا تعمل logout في الصفحات العامة
-      if (!isPublicRoute) {
-        triggerLogout();
-      }
-
-      throw new Error("Unauthorized");
-    }
-
     const message =
       error?.response?.data?.message ||
       error?.response?.data?.error ||
       "Request failed";
+    const status = error?.response?.status;
+    const path = typeof window !== "undefined" ? window.location.pathname : "";
+    const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
+
+    if (status === 401 || status === 403) {
+      await clearAuthStorage();
+      if (!isPublicRoute) {
+        triggerLogout();
+      }
+
+      throw new Error(message || "Unauthorized");
+    }
 
     return Promise.reject(new Error(message));
   },
